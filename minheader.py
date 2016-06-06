@@ -14,15 +14,13 @@ parser.add_argument(
   action='append',
   required=True)
 parser.add_argument(
-  '--source-file',
-  dest='source_files',
-  action='append',
-  required=True)
-parser.add_argument(
   '--test-command',
   dest='test_command',
   action='store',
   required=True)
+parser.add_argument(
+  dest='source_files',
+  nargs='+')
 FLAGS = parser.parse_args()
 
 
@@ -62,7 +60,7 @@ class MinHeader(object):
 
       # Is the include useful at all?
       if self._TestReplacement(path, lines, inc_i, []):
-        self._Log('USELESS\n')
+        self._Log('UNUSED\n')
         return True
       elif self._TestReplacement(path, lines, inc_i, sub_includes):
         self._Log('OVERBROAD\n')
