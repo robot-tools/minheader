@@ -36,6 +36,10 @@ class BaseTestFailed(Error):
   pass
 
 
+class Interrupted(Error):
+  pass
+
+
 class MinHeader(object):
 
   _INCLUDE_RE = re.compile('^#include ["<](?P<include_path>[^>"]+\.[^>"]+)[>"]')
@@ -133,7 +137,10 @@ class MinHeader(object):
     raise IncludeNotFound(path)
 
   def _TestPasses(self):
-    return subprocess.call(self._test_command, shell=True) == 0
+    ret = subprocess.call(self._test_command, shell=True)
+    if ret in (-2, 8):
+      raise Interrupted
+    return ret == 0
 
 
 def main():
