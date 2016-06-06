@@ -42,7 +42,7 @@ class Interrupted(Error):
 
 class MinHeader(object):
 
-  _INCLUDE_RE = re.compile('^#include ["<](?P<include_path>[^>"]+\.[^>"]+)[>"]')
+  _INCLUDE_RE = re.compile('^#include ["<](?P<include_path>[^>"]+)[>"]')
 
   def __init__(self, include_paths, test_command):
     self._include_paths = include_paths
