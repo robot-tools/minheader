@@ -71,20 +71,21 @@ class MinHeader(object):
 
       self._Log('\t%s: ' % inc_path)
 
+      missing = False
       try:
         sub_includes = self._FindSubIncludes(inc_path)
       except IncludeNotFound:
         self._Log('(MISSING) ')
-        sub_includes = []
+        missing = True
 
       # Is the include useful at all?
       if self._TestReplacement(path, lines, inc_i, []):
         self._Log('UNUSED\n')
         return True
-      elif set(sub_includes) & split:
+      elif not missing and set(sub_includes) & split:
         self._Log('CIRCULAR\n')
         continue
-      elif self._TestReplacement(path, lines, inc_i, sub_includes):
+      elif not missing and self._TestReplacement(path, lines, inc_i, sub_includes):
         self._Log('OVERBROAD\n')
         split.add(inc_path)
         return True
