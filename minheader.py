@@ -58,10 +58,11 @@ class MinHeader(object):
   def Minify(self, path):
     self._Log('%s:\n' % path)
     known_required = set()
-    while self._MinifyPass(path, known_required):
+    split = set()
+    while self._MinifyPass(path, known_required, split):
       pass
 
-  def _MinifyPass(self, path, known_required):
+  def _MinifyPass(self, path, known_required, split):
     lines = self._LoadFile(path)
     includes = self._FindIncludes(lines)
     for inc_i, inc_path in includes:
@@ -80,8 +81,12 @@ class MinHeader(object):
       if self._TestReplacement(path, lines, inc_i, []):
         self._Log('UNUSED\n')
         return True
+      elif set(sub_includes) & split:
+        self._Log('CIRCULAR\n')
+        continue
       elif self._TestReplacement(path, lines, inc_i, sub_includes):
         self._Log('OVERBROAD\n')
+        split.add(inc_path)
         return True
       else:
         self._Log('REQUIRED\n')
@@ -116,6 +121,7 @@ class MinHeader(object):
         return False
     except:
       self._WriteFile(path, lines)
+      raise
 
   def _FindIncludes(self, lines):
     ret = []
