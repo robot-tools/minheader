@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import argparse
-import functools
 import os
 import re
 import subprocess
@@ -45,7 +44,6 @@ class MinHeader(object):
 
   def Minify(self, path):
     self._Log('%s:\n' % path)
-    self._ClearCaches()
     assert(self._TestPasses())
     known_required = {}
     while self._MinifyPass(path, known_required):
@@ -77,9 +75,6 @@ class MinHeader(object):
 
   def _Log(self, msg):
     print(msg, file=sys.stderr, flush=True, end='')
-
-  def _ClearCaches(self):
-    self._FindSubIncludes.cache_clear()
 
   def _LoadFile(self, path):
     with open(path, 'r') as fh:
@@ -114,7 +109,6 @@ class MinHeader(object):
         ret.append((i, match.group('include_path')))
     return ret
 
-  @functools.lru_cache()
   def _FindSubIncludes(self, path):
     full_path = self._FindFile(path)
     return [x[1] for x in self._FindIncludes(self._LoadFile(full_path))]
