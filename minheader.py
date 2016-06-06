@@ -45,7 +45,7 @@ class MinHeader(object):
   def Minify(self, path):
     self._Log('%s:\n' % path)
     assert(self._TestPasses())
-    known_required = {}
+    known_required = set()
     while self._MinifyPass(path, known_required):
       pass
 
