@@ -56,7 +56,11 @@ class MinHeader(object):
 
       self._Log('\t%s: ' % inc_path)
 
-      sub_includes = self._FindSubIncludes(inc_path)
+      try:
+        sub_includes = self._FindSubIncludes(inc_path)
+      except IncludeNotFound:
+        self._Log('(MISSING) ')
+        sub_includes = []
 
       # Is the include useful at all?
       if self._TestReplacement(path, lines, inc_i, []):
