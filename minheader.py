@@ -32,6 +32,10 @@ class IncludeNotFound(Error):
   pass
 
 
+class BaseTestFailed(Error):
+  pass
+
+
 class MinHeader(object):
 
   _INCLUDE_RE = re.compile('^#include ["<](?P<include_path>[^>"]+\.[^>"]+)[>"]')
@@ -40,9 +44,15 @@ class MinHeader(object):
     self._include_paths = include_paths
     self._test_command = test_command
 
+    self._Log('Initial test: ')
+    if self._TestPasses():
+      self._Log('PASS\n')
+    else:
+      self._Log('FAIL\n')
+      raise BaseTestFailed
+
   def Minify(self, path):
     self._Log('%s:\n' % path)
-    assert(self._TestPasses())
     known_required = set()
     while self._MinifyPass(path, known_required):
       pass
