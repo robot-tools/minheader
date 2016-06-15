@@ -42,7 +42,7 @@ class Interrupted(Error):
 
 class MinHeader(object):
 
-  _INCLUDE_RE = re.compile('^#include ["<](?P<include_path>[^>"]+)[>"]')
+  _INCLUDE_RE = re.compile('^#include (?P<include_path>["<][^>"]+[>"])')
 
   def __init__(self, include_paths, test_command):
     self._include_paths = include_paths
@@ -109,7 +109,7 @@ class MinHeader(object):
 
   def _ReplaceAndWrite(self, path, lines, replace_i, replace_includes):
     new_lines = list(lines)
-    new_lines[replace_i:replace_i + 1] = ['#include "%s"\n' % x for x in replace_includes]
+    new_lines[replace_i:replace_i + 1] = ['#include %s\n' % x for x in replace_includes]
     self._WriteFile(path, new_lines)
 
   def _TestReplacement(self, path, lines, replace_i, replace_includes):
@@ -137,6 +137,7 @@ class MinHeader(object):
     return [x[1] for x in self._FindIncludes(self._LoadFile(full_path))]
 
   def _FindFile(self, path):
+    path = path[1:-1]
     for include_path in self._include_paths:
       full_path = os.path.join(include_path, path)
       if os.path.exists(full_path):
